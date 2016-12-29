@@ -23,10 +23,10 @@ struct ExecutableCode {
 };
 
 
-struct ExecutableCode create_ExecutableCode_from_File(const char *filename);
-struct ExecutableCode create_ExecutableCode_from_ShellCode(const char *shellcode, size_t length);
-void execute_ExecutableCode(struct ExecutableCode code);
-void destroy_ExecutableCode(struct ExecutableCode code);
-void print_ExecutableCode(struct ExecutableCode code);
+struct ExecutableCode* create_ExecutableCode_from_File(const char *filename);
+struct ExecutableCode* create_ExecutableCode_from_ShellCode(const char *shellcode, size_t length);
+void execute_ExecutableCode(struct ExecutableCode* code);
+void destroy_ExecutableCode(struct ExecutableCode* code);
+void print_ExecutableCode(struct ExecutableCode* code);
 
 void PrintVersion(void);

@@ -4,7 +4,6 @@
 
 #include "PyShellCode.h"
 
-
 struct ExecutableCode* create_ExecutableCode_from_File(const char *filename) {
 
     struct stat sbuf;
@@ -88,17 +87,23 @@ void PrintVersion() {
 }
 
 
+/**
+ * Make this shared library executable
+ */
+const char elf_interpreter[] __attribute__((section(".interp"))) = "@ELF_INTERPRETER_PATH@";
+
+
 int main(int argc, char *argv[]) {
     
     if(argc == 0) {
         printf("Did not receive any arguments");
-        return 1;
+        exit(1);
     }
 
     if(argc == 1 || argc > 3) {
         printf("Usage %s filename\n", argv[0]);
         printf("Usage %s shellcode length\n", argv[0]);
-        return 1;
+        exit(1);
     }
 
     struct ExecutableCode* code = NULL;
@@ -114,5 +119,5 @@ int main(int argc, char *argv[]) {
     execute_ExecutableCode(code);
     destroy_ExecutableCode(code);
 
-    return 0;
+    exit(0);
 }

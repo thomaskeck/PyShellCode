@@ -2,29 +2,54 @@ cmake_minimum_required (VERSION 2.8.12)
 
 set(CMAKE_C_COMPILER gcc)
 
-project (PyShellCode)
+project (PyShellCode C ASM_NASM)
 set (PyShellCode_VERSION_MAJOR 0)
 set (PyShellCode_VERSION_MINOR 1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -O3 -Wall -Wextra -g -msse2")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -ggdb3 -g -std=c++11 -Wall -Wextra")
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -Wextra -g -msse2")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb3 -Wall -Wextra -g -e _main")
+SET(CMAKE_ASM_FLAGS "-x assembler-with-cpp" )
+
+set(INTERPRETER_DESCRIPTION "Requesting program interpreter:")
+ 
+execute_process(COMMAND readelf -l /bin/ls
+    RESULT_VARIABLE return_value
+    OUTPUT_VARIABLE result
+)
+ 
+if(return_value)
+    message(STATUS "Cannot find a valid ELF interpreter")
+else()
+    string(REGEX REPLACE
+        ".*[[]${INTERPRETER_DESCRIPTION} ([/][^ ].+)[]].*" "\\1"
+        ELF_INTERPRETER_PATH "${result}"
+    )
+    message(STATUS "ELF interpreter is ${ELF_INTERPRETER_PATH}")
+endif()
 
 configure_file (
     "${PROJECT_SOURCE_DIR}/include/PyShellCode.h.in"
     "${PROJECT_BINARY_DIR}/include/PyShellCode.h"
 )
 
+configure_file (
+    "${PROJECT_SOURCE_DIR}/src/PyShellCode.c.in"
+    "${PROJECT_BINARY_DIR}/src/PyShellCode.c"
+)
+
 include_directories("${PROJECT_SOURCE_DIR}/include/" "${PROJECT_BINARY_DIR}/include/")
 
 set(PyShellCode_SOURCES
-    "${PROJECT_SOURCE_DIR}/src/PyShellCode.c"
+    "${PROJECT_BINARY_DIR}/src/PyShellCode.c"
+    "${PROJECT_SOURCE_DIR}/src/CommandLineArgumentGlue.asm"
 )
 
 set(PyShellCode_HEADERS
     "${PROJECT_BINARY_DIR}/include/PyShellCode.h"
 )
+
 
 add_library(PyShellCode SHARED ${PyShellCode_SOURCES} ${PyShellCode_HEADERS})
 target_link_libraries(PyShellCode)
