@@ -1,0 +1,32 @@
+/*
+ * Thomas Keck 2017
+ */
+
+#pragma once
+
+#define PyShellCode_VERSION_MAJOR @PyShellCode_VERSION_MAJOR@
+#define PyShellCode_VERSION_MINOR @PyShellCode_VERSION_MINOR@
+
+#include <sys/mman.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+
+struct ExecutableCode {
+    size_t length;
+    void *addr;
+};
+
+
+struct ExecutableCode create_ExecutableCode_from_File(const char *filename);
+struct ExecutableCode create_ExecutableCode_from_ShellCode(const char *shellcode, size_t length);
+void execute_ExecutableCode(struct ExecutableCode code);
+void destroy_ExecutableCode(struct ExecutableCode code);
+void print_ExecutableCode(struct ExecutableCode code);
+
+void PrintVersion(void);

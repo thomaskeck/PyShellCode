@@ -1,0 +1,7 @@
+from distutils.core import setup
+
+setup(name='PyShellCode',
+      version='${PACKAGE_VERSION}',
+      package_dir={ '': '${CMAKE_CURRENT_SOURCE_DIR}' },
+      packages=['PyShellCode'])
+
