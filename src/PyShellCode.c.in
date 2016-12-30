@@ -42,7 +42,12 @@ struct ExecutableCode* create_ExecutableCode_from_ShellCode(const char *shellcod
 
     struct ExecutableCode *code = malloc(sizeof(struct ExecutableCode));
     code->length = length;
-    code->addr = mmap(NULL, code->length, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
+    
+    // Using an address automatically assigned by the kernel does not work properly
+    // The address is not accepted by syscall_write as a valid address (although write of glibc accepts it)
+    // Tested with: write(1, (unsigned char*)code->addr + 0x26, 15);
+    //code->addr = mmap(NULL, code->length, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
+    code->addr = mmap((void*)0x80000, code->length, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
 
     if(code->addr == MAP_FAILED) {
         perror("Memory mapping failed");
@@ -55,10 +60,26 @@ struct ExecutableCode* create_ExecutableCode_from_ShellCode(const char *shellcod
     return code;
 }
 
-void execute_ExecutableCode(struct ExecutableCode* code) {
+int valid_ExecutableCode(struct ExecutableCode* code) {
 
-    ((void (*)(void))code->addr)();
+    return code != NULL && code->addr != NULL && code->length > 0;
 
+}
+
+int64_t execute_ExecutableCode(struct ExecutableCode* code) {
+
+    if(code == NULL)
+        return 0;
+    int64_t result = ((int64_t (*)(void))code->addr)();
+    return result;
+}
+
+int64_t execute2_ExecutableCode(struct ExecutableCode* code, void *arguments) {
+
+    if(code == NULL)
+        return 0;
+    int64_t result = ((int64_t (*)(void*))code->addr)(arguments);
+    return result;
 }
 
 void destroy_ExecutableCode(struct ExecutableCode* code) {
@@ -115,7 +136,7 @@ int main(int argc, char *argv[]) {
     if(argc == 3) {
         code = create_ExecutableCode_from_ShellCode(argv[1], atoi(argv[2]));
     }
-
+    print_ExecutableCode(code);
     execute_ExecutableCode(code);
     destroy_ExecutableCode(code);
 

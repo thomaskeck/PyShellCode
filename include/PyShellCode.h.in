@@ -25,7 +25,9 @@ struct ExecutableCode {
 
 struct ExecutableCode* create_ExecutableCode_from_File(const char *filename);
 struct ExecutableCode* create_ExecutableCode_from_ShellCode(const char *shellcode, size_t length);
-void execute_ExecutableCode(struct ExecutableCode* code);
+int valid_ExecutableCode(struct ExecutableCode* code);
+int64_t execute_ExecutableCode(struct ExecutableCode* code);
+int64_t execute2_ExecutableCode(struct ExecutableCode* code, void *arguments);
 void destroy_ExecutableCode(struct ExecutableCode* code);
 void print_ExecutableCode(struct ExecutableCode* code);
 
