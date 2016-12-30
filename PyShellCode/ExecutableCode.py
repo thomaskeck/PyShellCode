@@ -4,6 +4,8 @@ import ctypes
 import ctypes.util
 
 import os
+import tempfile
+import subprocess
 
 PyShellCode_library =  ctypes.cdll.LoadLibrary(os.getcwd() + '/libPyShellCode.so')
 print('Loaded ', PyShellCode_library)
@@ -41,6 +43,21 @@ class ExecutableCode(object):
 
     def __del__(self):
         PyShellCode_library.destroy_ExecutableCode(self.executable_code)
+
+    @classmethod
+    def from_NASMCode(cls, nasm_code):
+        oldcwd = os.getcwd()
+        with tempfile.TemporaryDirectory() as tempdir:
+            os.chdir(tempdir)
+            with open('shellcode.asm', 'w') as f:
+                f.write("global _start\nsection .text\n_start:\n")
+                f.write(nasm_code)
+            subprocess.check_call("nasm -f elf64 shellcode.asm -o shellcode.o", shell=True)
+            subprocess.check_call("ld -o shellcode shellcode.o", shell=True)
+            output = subprocess.getoutput("objdump -d shellcode | tr '\t' ' ' | tr ' ' '\n' | egrep '^[0-9a-f]{2}$'")
+            shell_code = bytes(map(lambda x: int(x, base=16), output.strip().split('\n')))
+        os.chdir(oldcwd)
+        return cls.from_ShellCode(shell_code)
 
     @classmethod
     def from_ShellCode(cls, shell_code):

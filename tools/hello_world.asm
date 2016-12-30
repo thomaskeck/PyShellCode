@@ -18,7 +18,7 @@ GOBACK:
     mov rbx, 0x1
     pop rcx          ; 3) we are poping into `ecx`, now we have the
                      ; address of "Hello, World!\n" 
-    mov rdx, 0xC
+    mov rdx, 0xF
     int 0x80
     ret
 MESSAGE:
