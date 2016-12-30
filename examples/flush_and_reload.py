@@ -1,4 +1,3 @@
-from PyShellCode import ShellCode
 from PyShellCode import ExecutableCode
 
 import ctypes
@@ -11,27 +10,48 @@ if __name__ == '__main__':
     array = (ctypes.c_ulong*(5*1024))()
     ptr = ctypes.addressof(array) + ctypes.sizeof(ctypes.c_ulong)*(2*1024)
 
-    """
-    rdtsc = ExecutableCode.ExecutableCode.from_ShellCode(ShellCode.call_rdtsc())
-    maccess =  ExecutableCode.ExecutableCode.from_ShellCode(ShellCode.call_maccess(ptr))
-    flush = ExecutableCode.ExecutableCode.from_ShellCode(ShellCode.call_flush(ptr))
+    onlyreload_nasm_code = """
+        mfence
+        rdtsc
+        shl   rdx, 32
+        or    rax, rdx
+        mfence
+        mov   rcx, rax  ; Save rax
+        mov   rbx, {ptr}
+        mov   rax, [rbx]
+        mfence
+        rdtsc
+        shl   rdx, 32
+        or    rax, rdx
+        mfence
+        sub   rax, rcx
+        ret
+    """.format(ptr=ptr)
 
-    def onlyreload():
-        time = rdtsc()
-        maccess()
-        delta = rdtsc() - time
-        return ctypes.c_uint32(delta).value
+    flushandreload_nasm_code = """
+        mfence
+        rdtsc
+        shl   rdx, 32
+        or    rax, rdx
+        mfence
+        mov   rcx, rax  ; Save rax
+        mov   rbx, {ptr}
+        mov   rax, [rbx]
+        mfence
+        rdtsc
+        shl   rdx, 32
+        or    rax, rdx
+        mfence
+        sub   rax, rcx
+        mov   rcx, rax
+        mov   rax, {ptr}
+        clflush [rax]
+        mov   rax, rcx
+        ret
+    """.format(ptr=ptr)
 
-    def flushandreload():
-        time = rdtsc()
-        maccess()
-        delta = rdtsc() - time
-        flush()
-        return ctypes.c_uint32(delta).value
-    """
-
-    onlyreload = ExecutableCode.ExecutableCode.from_ShellCode(ShellCode.call_onlyreload(ptr))
-    flushandreload = ExecutableCode.ExecutableCode.from_ShellCode(ShellCode.call_flushandreload(ptr))
+    onlyreload = ExecutableCode.ExecutableCode.from_NASMCode(onlyreload_nasm_code)
+    flushandreload = ExecutableCode.ExecutableCode.from_NASMCode(flushandreload_nasm_code)
 
     N = 1*1024**2
     hits = np.zeros(N)
