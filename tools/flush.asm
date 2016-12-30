@@ -10,4 +10,7 @@ _start:
     clflush [rbx]
     ;clflush [0xA17400088]
     mov rax, [rbx]
+    mov rcx, rax
+    sub rax, rcx
+    mov rax, rcx
     ret

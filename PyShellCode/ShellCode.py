@@ -84,3 +84,54 @@ def call_maccess(ptr):
 
 def call_longnop(ptr):
     return opcodes.nop * 64
+
+
+def call_onlyreload(ptr):
+    r = b''
+    r += opcodes.mfence
+    r += opcodes.rdtsc 
+    r += b'\x48\xc1\xe2\x20\x48\x09\xd0'
+    r += opcodes.mfence
+    # Save time measurement
+    r += b'\x48\x89\xc1' # Mov rax in rcx
+
+    # Memory access
+    r += b'\x48\xbb'
+    r += opcodes.to_binary(ptr, 'Q') 
+    r += b'\x48\x8b\x03'
+    
+    r += opcodes.mfence
+    r += opcodes.rdtsc 
+    r += b'\x48\xc1\xe2\x20\x48\x09\xd0'
+    r += opcodes.mfence
+    r += b'\x48\x29\xc8' # Sub rcx from rax
+    r += opcodes.ret
+    return r
+
+def call_flushandreload(ptr):
+    r = b''
+    r += opcodes.mfence
+    r += opcodes.rdtsc 
+    r += b'\x48\xc1\xe2\x20\x48\x09\xd0'
+    r += opcodes.mfence
+    # Save time measurement
+    r += b'\x48\x89\xc1' # Mov rax in rcx
+
+    # Memory access
+    r += b'\x48\xbb'
+    r += opcodes.to_binary(ptr, 'Q') 
+    r += b'\x48\x8b\x03'
+    
+    r += opcodes.mfence
+    r += opcodes.rdtsc 
+    r += b'\x48\xc1\xe2\x20\x48\x09\xd0'
+    r += opcodes.mfence
+    r += b'\x48\x29\xc8' # Sub rcx from rax
+    
+    r += b'\x48\x89\xc1' # Mov rax in rcx
+    r += b'\x48\xb8'
+    r += opcodes.to_binary(ptr, 'Q')
+    r += opcodes.flush_rax
+    r += b'\x48\x89\xc8'
+    r += opcodes.ret
+    return r
