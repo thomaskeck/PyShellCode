@@ -5,7 +5,9 @@ global _start
 section .text
 
 _start:
-    mov rax, 0x1234
-    clflush [rax]
-    clflush [0x1234]
-    mov rax, [0x1234]
+    mov rax, 0xA17400088
+    mov rbx, 0xA17400088
+    clflush [rbx]
+    ;clflush [0xA17400088]
+    mov rax, [rbx]
+    ret

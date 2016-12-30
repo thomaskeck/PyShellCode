@@ -5,14 +5,11 @@ import ctypes
 import numpy as np
 import matplotlib.pyplot as plt
 
-import struct
+import pdb
 
 if __name__ == '__main__':
     array = (ctypes.c_ulong*(5*1024))()
     ptr = ctypes.addressof(array) + ctypes.sizeof(ctypes.c_ulong)*(2*1024)
-
-    print(hex(ptr))
-    print(struct.pack('=Q', ptr))
 
     rdtsc = ExecutableCode.ExecutableCode.from_ShellCode(ShellCode.call_rdtsc())
     maccess =  ExecutableCode.ExecutableCode.from_ShellCode(ShellCode.call_maccess(ptr))
@@ -22,14 +19,14 @@ if __name__ == '__main__':
         time = rdtsc()
         maccess()
         delta = rdtsc() - time
-        return delta
+        return ctypes.c_uint32(delta).value
 
     def flushandreload():
         time = rdtsc()
         maccess()
         delta = rdtsc() - time
         flush()
-        return delta
+        return ctypes.c_uint32(delta).value
 
     N = 1*1024**2
     hits = np.zeros(N)
@@ -40,7 +37,7 @@ if __name__ == '__main__':
     for i in range(N):
         miss[i] = flushandreload()
 
-    plt.hist(hits, label='hits', alpha=0.5)
-    plt.hist(miss, label='miss', alpha=0.5)
+    plt.hist(hits[hits < 1e4], label='hits', alpha=0.5, bins=1000)
+    plt.hist(miss[miss < 1e4], label='miss', alpha=0.5, bins=1000)
     plt.legend()
     plt.show()

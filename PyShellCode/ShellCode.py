@@ -20,7 +20,6 @@ class opcodes(object):
     rdtsc      = b'\x0f\x31'
     rdtscp     = b'\x0f\x01\xf9'
     cpuid      = b'\x0f\xa2'
-    memaccess  = b'\x48\x8b\x04\x25' # Move content of address in rax
 
     @staticmethod
     def to_binary(data, c_type='i'):
@@ -78,10 +77,10 @@ def call_rdtsc(nofence=False, begin=False, end=False):
     return r + opcodes.ret
 
 def call_flush(ptr):
-    return (opcodes.flush_addr + opcodes.to_binary(ptr, 'Q') + opcodes.ret)
+    return (b'\x48\xb8' + opcodes.to_binary(ptr, 'Q') + opcodes.flush_rax + opcodes.ret)
 
 def call_maccess(ptr):
-    return (opcodes.memaccess + opcodes.to_binary(ptr, 'Q') + opcodes.ret)
+    return (b'\x48\xbb' + opcodes.to_binary(ptr, 'Q') + b'\x48\x8b\x03' + opcodes.ret)
 
 def call_longnop(ptr):
     return opcodes.nop * 64
