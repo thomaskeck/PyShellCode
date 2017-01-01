@@ -16,10 +16,10 @@ PyShellCode_library.create_ExecutableCode_from_File.restype = ctypes.c_void_p
 PyShellCode_library.create_ExecutableCode_from_File.argtypes = [ctypes.c_char_p]
 PyShellCode_library.valid_ExecutableCode.restype = ctypes.c_int
 PyShellCode_library.valid_ExecutableCode.argtypes = [ctypes.c_void_p]
-PyShellCode_library.execute_ExecutableCode.restype = ctypes.c_int
+PyShellCode_library.execute_ExecutableCode.restype = ctypes.c_int64
 PyShellCode_library.execute_ExecutableCode.argtypes = [ctypes.c_void_p]
-PyShellCode_library.execute2_ExecutableCode.restype = ctypes.c_int
-PyShellCode_library.execute2_ExecutableCode.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+PyShellCode_library.execute_with_void_ptr_ExecutableCode.restype = ctypes.c_int64
+PyShellCode_library.execute_with_void_ptr_ExecutableCode.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 PyShellCode_library.destroy_ExecutableCode.argtypes = [ctypes.c_void_p]
 PyShellCode_library.print_ExecutableCode.argtypes = [ctypes.c_void_p]
 
@@ -38,8 +38,12 @@ class ExecutableCode(object):
     def isValid(self):
         return PyShellCode_library.valid_ExecutableCode(self.executable_code) != 0
 
-    def __call__(self):
-        return PyShellCode_library.execute_ExecutableCode(self.executable_code)
+    def __call__(self, data=None):
+        if data is None:
+            return PyShellCode_library.execute_ExecutableCode(self.executable_code)
+        else:
+            ptr = ctypes.addressof(data)
+            return PyShellCode_library.execute_with_void_ptr_ExecutableCode(self.executable_code, ptr)
 
     def __del__(self):
         PyShellCode_library.destroy_ExecutableCode(self.executable_code)

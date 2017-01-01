@@ -74,7 +74,7 @@ int64_t execute_ExecutableCode(struct ExecutableCode* code) {
     return result;
 }
 
-int64_t execute2_ExecutableCode(struct ExecutableCode* code, void *arguments) {
+int64_t execute_with_void_ptr_ExecutableCode(struct ExecutableCode* code, void *arguments) {
 
     if(code == NULL)
         return 0;
