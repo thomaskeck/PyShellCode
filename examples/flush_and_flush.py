@@ -11,6 +11,10 @@ if __name__ == '__main__':
     ptr = ctypes.addressof(array) + ctypes.sizeof(ctypes.c_ulong)*(2*1024)
 
     onlyreload_nasm_code = """
+        mov   rbx, {ptr}
+        mov   rcx, [rbx]
+        mov   rcx, [rbx]
+        cpuid
         mfence
         rdtsc
         shl   rdx, 32
@@ -25,13 +29,17 @@ if __name__ == '__main__':
         or    rax, rdx
         mfence
         sub   rax, rcx
-        mov   rbx, {ptr}
-        mov   rcx, [rbx]
-        mov   rcx, [rbx]
         ret
     """.format(ptr=ptr)
 
     flushandreload_nasm_code = """
+        mov   rbx, {ptr}
+        mov   rcx, [rbx]
+        mov   rcx, [rbx]
+        cpuid
+        mov   rax, {ptr}
+        clflush [rax]
+        cpuid
         mfence
         rdtsc
         shl   rdx, 32
@@ -46,10 +54,6 @@ if __name__ == '__main__':
         or    rax, rdx
         mfence
         sub   rax, rcx
-        mov   rcx, rax
-        mov   rax, {ptr}
-        clflush [rax]
-        mov   rax, rcx
         ret
     """.format(ptr=ptr)
 
@@ -65,8 +69,8 @@ if __name__ == '__main__':
     for i in range(N):
         miss[i] = flushandreload()
 
-    bins = 600
-    plt.hist(hits[hits < bins], label='hits', bins=bins/10)
-    plt.hist(miss[miss < bins], label='miss', bins=bins/10)
+    bins = 300
+    plt.hist(hits[hits < bins], label='hits', bins=bins/5, alpha=0.5)
+    plt.hist(miss[miss < bins], label='miss', bins=bins/5, alpha=0.5)
     plt.legend()
     plt.show()
