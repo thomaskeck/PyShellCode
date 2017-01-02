@@ -9,7 +9,7 @@ set (PyShellCode_VERSION_MINOR 1)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
 # -O3 causes segmentation faults ...
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -Wextra -g -e _main")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -Wextra -g -e _main -ggdb3")
 SET(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} -x assembler-with-cpp" )
 
 set(INTERPRETER_DESCRIPTION "Requesting program interpreter:")

@@ -19,8 +19,12 @@ GOBACK:
     pop rcx          ; 3) we are poping into `ecx`, now we have the
                      ; address of "Hello, World!\n" 
     mov rdx, 0xF
-    int 0x80
-    ret
+    syscall
+    ;int 0x80
+    mov rax, 0x1
+    mov rbx, 0x0
+    ;int 0x80
+    syscall
 MESSAGE:
     call GOBACK       ; 2) we are going back, since we used `call`, that means
                       ; the return address, which is in this case the address 

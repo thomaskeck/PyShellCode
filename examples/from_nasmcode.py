@@ -4,12 +4,12 @@ if __name__ == '__main__':
     nasm_code = """
     jmp MESSAGE      ; 1) lets jump to MESSAGE
 GOBACK:
-    mov rax, 0x4
-    mov rbx, 0x1
-    pop rcx          ; 3) we are poping into `ecx`, now we have the
+    mov rax, 0x1
+    mov rdi, 0x1
+    pop rsi          ; 3) we are poping into `rdi`, now we have the
                      ; address of "Hello, World!" 
     mov rdx, 0xF
-    int 0x80
+    syscall
     ret
 MESSAGE:
     call GOBACK       ; 2) we are going back, since we used `call`, that means

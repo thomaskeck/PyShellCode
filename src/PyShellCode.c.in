@@ -43,11 +43,7 @@ struct ExecutableCode* create_ExecutableCode_from_ShellCode(const char *shellcod
     struct ExecutableCode *code = malloc(sizeof(struct ExecutableCode));
     code->length = length;
     
-    // Using an address automatically assigned by the kernel does not work properly
-    // The address is not accepted by syscall_write as a valid address (although write of glibc accepts it)
-    // Tested with: write(1, (unsigned char*)code->addr + 0x26, 15);
-    //code->addr = mmap(NULL, code->length, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
-    code->addr = mmap((void*)0x80000, code->length, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
+    code->addr = mmap(NULL, code->length, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
 
     if(code->addr == MAP_FAILED) {
         perror("Memory mapping failed");
