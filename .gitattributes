@@ -1,1 +1,3 @@
 *.in linguist-language=C
+*.h.in linguist-language=C
+*.c.in linguist-language=C
