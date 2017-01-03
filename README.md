@@ -74,7 +74,7 @@ Finally we obtain the address of the memory and create a C Function Pointer usin
 import ctypes
 restype = ctypes.c_int64
 argtypes = tuple()
-buffer = ctypes.c_int.from_buffer(memory_chunk)
+buffer = ctypes.c_int.from_buffer(p)
 func = ctypes.CFUNCTYPE(restype, *argtypes)(ctypes.addressof(buffer))
 func()
 ```
