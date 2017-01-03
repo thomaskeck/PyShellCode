@@ -3,11 +3,10 @@
 Execute ShellCode in Python.
 In other words, allows to use "inline assembler" in Python.
 
-There are two implementations:
-  * C Implementation -- which is called wrapped using ctypes for usage in python, but can be used standalone as well
-  * Python3 Implementation -- does not require the shared library which is build by cmake
-In my opinion the python implementation is superior and could be even better (more pythonic) if I wouldn't enforce
-the same interface for both implementations.
+There are three implementations:
+  * C Implementation (Cimp.py) -- which is called wrapped using ctypes for usage in python, but can be used standalone as well
+  * Python3 Implementation (PythonImp.py) -- does not require the shared library which is build by cmake, has the same interface as CImp
+  * Python3 Implementation (Simple.py) -- most condensed implementation **use this** (pure python, just two functions)
 
 All the code is highly platform-dependent in my case:
 Linux thinkpad 4.8.0-2-amd64 #1 SMP Debian 4.8.11-1 (2016-12-02) x86_64 GNU/Linux
@@ -15,7 +14,7 @@ Linux thinkpad 4.8.0-2-amd64 #1 SMP Debian 4.8.11-1 (2016-12-02) x86_64 GNU/Linu
 This is intended as a simple project to learn more about x86-64 assembler and linux.
 As well as serve for a easy platform to recreate cache-attacks and other side-channels attacks which require assembly.
 If you want to use the code to do something similar I recommend reading the paragraph **Technical Details** below
-and implement it yourself since it's not hard once you know how-to do it.
+and implement it yourself (or copy&paste Simple.py) since it's not hard once you know how-to do it.
 
 Contains also some interesting code for CMake, to build shared-libraries which are executable and take command line arguments.
 
@@ -53,7 +52,12 @@ nasm -f elf64 shellcode.asm -o shellcode.o
 ld -o shellcode shellcode.o
 for i in `objdump -d shellcode | tr '\t' ' ' | tr ' ' '\n' | egrep '^[0-9a-f]{2}$' ` ; do echo -n "\x$i" ; done
 ```
-The class method *from_NASMCode* does this for you.
+The function *create_shellcode_from_nasmcode* in *Simple.py* does this for you.
+
+A simple hello world shell-code looks like this
+```python
+shell_code = b"\xeb\x13\xb8\x01\x00\x00\x00\xbf\x01\x00\x00\x00\x5e\xba\x0f\x00\x00\x00\x0f\x05\xc3\xe8\xe8\xff\xff\xff\x48\x65\x6c\x6c\x6f\x2c\x20\x57\x6f\x72\x6c\x64\x21\x0a"
+```
 
 **Side note**: *Traditional* shell-code is concerned with avoiding 0-bytes, because it is typically injected 
 into a unvalided user-input request. This isn't a problem if you just want to execute your code as inline-assembler,
@@ -65,7 +69,7 @@ Secondly we create a pice of executable memory in python and write our shell-cod
 ```python
 import mmap
 shell_code = b'<Your Shell Code goes here>'
-p = mmap.mmap(-1, len(shell_code), flags=mmap.MAP_SHARED | mmap.MAP_ANONYMOUS, prot=mmap.PROT_WRITE | mmap.PROT_READ | mmap.PROT_EXEC)
+mm = mmap.mmap(-1, len(shell_code), flags=mmap.MAP_SHARED | mmap.MAP_ANONYMOUS, prot=mmap.PROT_WRITE | mmap.PROT_READ | mmap.PROT_EXEC)
 mm.write(shell_code)
 ```
 
@@ -74,13 +78,15 @@ Finally we obtain the address of the memory and create a C Function Pointer usin
 import ctypes
 restype = ctypes.c_int64
 argtypes = tuple()
-buffer = ctypes.c_int.from_buffer(memory_chunk)
-func = ctypes.CFUNCTYPE(restype, *argtypes)(ctypes.addressof(buffer))
+ctypes_buffer = ctypes.c_int.from_buffer(mm)
+function = ctypes.CFUNCTYPE(restype, *argtypes)(ctypes.addressof(ctypes_buffer))
 func()
 ```
 
-The class *ExecutableCode* in the PyShellCode implements this. As I stated above this code was meant as a learn-project.
-I recommend using directly the code I described above instead of PyShellCode itself.
+The function *create_function_from_shellcode* in *Simple.py* implements this.
+As I stated above this code was meant as a learn-project.
+I recommend using directly the code I described above (or Simple.py which basically contains this code) instead of PyShellCode itself,
+because the dependency on the shared-library of the C-Implementation is unnecessary for you.
 
 The C-Implementation looks similar.
 
