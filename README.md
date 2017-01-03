@@ -80,7 +80,7 @@ restype = ctypes.c_int64
 argtypes = tuple()
 ctypes_buffer = ctypes.c_int.from_buffer(mm)
 function = ctypes.CFUNCTYPE(restype, *argtypes)(ctypes.addressof(ctypes_buffer))
-func()
+function()
 ```
 
 The function *create_function_from_shellcode* in *Simple.py* implements this.
