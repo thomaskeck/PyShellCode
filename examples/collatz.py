@@ -80,7 +80,7 @@ L_007:  mov     rax, qword [rbp-18H]                    ; 0098 _ 48: 8B. 45, E8
         ret                                             ; 00A7 _ C3
     """.format(number=N)
     
-pyshellcode_maximum_collatz_length_below = ExecutableCode.ExecutableCode.from_NASMCode(nasm_maximum_collatz_length_below())
+pyshellcode_maximum_collatz_length_below = ExecutableCode.from_NASMCode(nasm_maximum_collatz_length_below())
 
 import numba
 numba_maximum_collatz_length_below = numba.jit()(python_maximum_collatz_length_below)

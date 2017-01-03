@@ -18,7 +18,7 @@ MESSAGE:
     db "Hello, World!", 0ah, 000, 000
     """
 
-    code = ExecutableCode.ExecutableCode.from_NASMCode(nasm_code)
+    code = ExecutableCode.from_NASMCode(nasm_code)
     print("Is the generated Executable Code valid?", code.isValid())
     print("Generated Shell Code", code.print())
     print("Run code")

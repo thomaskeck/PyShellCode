@@ -3,8 +3,8 @@ cmake_minimum_required (VERSION 2.8.12)
 set(CMAKE_C_COMPILER gcc)
 
 project (PyShellCode C ASM_NASM)
-set (PyShellCode_VERSION_MAJOR 0)
-set (PyShellCode_VERSION_MINOR 1)
+set (PyShellCode_VERSION_MAJOR 1)
+set (PyShellCode_VERSION_MINOR 0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 

@@ -18,5 +18,5 @@ if __name__ == '__main__':
     ret
     """.format(length=len(text))
 
-    code = ExecutableCode.ExecutableCode.from_NASMCode(nasm_code)
+    code = ExecutableCode.from_NASMCode(nasm_code)
     result = code(data)

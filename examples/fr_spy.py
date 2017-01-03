@@ -54,14 +54,14 @@ if __name__ == '__main__':
         ret
     """
 
-    sched_yield = ExecutableCode.ExecutableCode.from_NASMCode(sched_yield_nasm_code)
+    sched_yield = ExecutableCode.from_NASMCode(sched_yield_nasm_code)
 
     print("Generating flushandreload instructions: ", filesize / 8)
     flushandreloads = []
     for i in range(0, filesize, 8):
         if i % 100 == 0:
             print(i)
-        flushandreloads.append(ExecutableCode.ExecutableCode.from_NASMCode(flushandreload_nasm_code.format(ptr=ptr+i)))
+        flushandreloads.append(ExecutableCode.from_NASMCode(flushandreload_nasm_code.format(ptr=ptr+i)))
 
     N = len(flushandreloads)
     print("Total test points", N)

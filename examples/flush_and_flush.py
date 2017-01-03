@@ -57,8 +57,8 @@ if __name__ == '__main__':
         ret
     """.format(ptr=ptr)
 
-    onlyreload = ExecutableCode.ExecutableCode.from_NASMCode(onlyreload_nasm_code)
-    flushandreload = ExecutableCode.ExecutableCode.from_NASMCode(flushandreload_nasm_code)
+    onlyreload = ExecutableCode.from_NASMCode(onlyreload_nasm_code)
+    flushandreload = ExecutableCode.from_NASMCode(flushandreload_nasm_code)
 
     N = 1*1024**2
     hits = np.zeros(N)
