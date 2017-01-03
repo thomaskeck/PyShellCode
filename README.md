@@ -112,3 +112,9 @@ PyShellCode [0.06954922499426175, 0.06870782400073949, 0.06622266400518129]
   * x86 Assembler http://x86.renejeschke.de/
   * Flush+Flush Cache Attack https://github.com/IAIK/flush_flush
   * https://en.wikibooks.org/wiki/X86_Assembly/Interfacing_with_Linux
+
+
+# Other work
+  * https://gist.github.com/dcoles/4071130  -- Very similar to the code provided here, but uses mprotect instead of mmap to create an executable buffer
+  * https://github.com//pycca/pycca -- Does not depend on external assembler, you can write assembler code directly in python in form of statements, supports C as well (alpha)
+  * https://github.com/Maratyszcza/PeachPy -- Write assembler in python, generates object files and more
