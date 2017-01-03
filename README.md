@@ -6,12 +6,12 @@ In other words, allows to use "inline assembler" in Python.
 There are three implementations:
   * C Implementation (Cimp.py) -- which is called wrapped using ctypes for usage in python, but can be used standalone as well
   * Python3 Implementation (PythonImp.py) -- does not require the shared library which is build by cmake, has the same interface as CImp
-  * Python3 Implementation (Simple.py) -- most condensed implementation **use this** (pure python, just two functions)
+  * Python3 Implementation (Simple.py) -- most condensed implementation, pure python, just two functions (**use this**)
 
-All the code is highly platform-dependent in my case:
+All the code is highly platform-dependent. In my case:
 Linux thinkpad 4.8.0-2-amd64 #1 SMP Debian 4.8.11-1 (2016-12-02) x86_64 GNU/Linux
 
-This is intended as a simple project to learn more about x86-64 assembler and linux.
+ **This is intended as a simple project to learn more about x86-64 assembler and linux (see paragraph Other Work)**
 As well as serve for a easy platform to recreate cache-attacks and other side-channels attacks which require assembly.
 If you want to use the code to do something similar I recommend reading the paragraph **Technical Details** below
 and implement it yourself (or copy&paste Simple.py) since it's not hard once you know how-to do it.
